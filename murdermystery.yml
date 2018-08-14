@@ -1,0 +1,23 @@
+version: "3.3"
+
+services:
+  murdermystery:
+    image: registry.gitlab.com/tedyst/murdermystery:latest
+    networks:
+      - minecraft
+    environment:
+      - MEMORIE=${MEMORIE:-512}
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          memory: 712M
+        reservations:
+          memory: 512M
+
+
+networks:
+  default:
+    external:
+      name: minecraft
