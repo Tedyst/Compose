@@ -1,0 +1,22 @@
+version: '2'
+services:
+  authelia:
+    container_name: authelia
+    image: clems4ever/authelia
+    restart: always
+    volumes:
+      - ./config.yml:/etc/authelia/config.yml:ro
+      - ./users.yml:/etc/authelia/users_database.yml
+      - /media/hddext4/Docker/authelia/:/etc/authelia/storage/
+      - /tmp/authelia:/tmp/authelia
+    environment:
+      - NODE_TLS_REJECT_UNAUTHORIZED=1
+    labels:
+      - traefik.frontend.rule=Host:auth.stoicatedy.ovh
+    networks:
+      - default
+
+networks:
+  default:
+    external:
+      name: web

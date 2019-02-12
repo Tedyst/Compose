@@ -1,0 +1,150 @@
+# docker-compose build && docker-compose up -d
+version: "3.2"
+
+volumes:
+  elasticsearch_data:
+    driver: local
+  kibana_data:
+    driver: local
+    
+services:
+
+  # Access api endpoint at http://localhost:9200
+  elasticsearch:
+    container_name: elasticsearch
+    image: elasticsearch
+    volumes:
+      - /media/hddext4/Docker/elasticsearch/:/usr/share/elasticsearch/data
+      - ./elasticsearch.yml:/conf/elasticsearch.yml
+    ports: 
+      - "7012:7012"
+    environment:
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
+      - discovery.zen.minimum_master_nodes=1
+      - discovery.type=single-node
+      # - xpack.security.enabled=false
+      # - xpack.monitoring.enabled=false
+      # - xpack.ml.enabled=false
+      # - xpack.graph.enabled=false
+      # - xpack.watcher.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    networks:
+      - default
+    restart: always
+
+# Access api endpoint at http://localhost:9200
+#  With XPack plugin
+#  elasticsearch:
+#    container_name: elasticsearch
+#    image: docker.elastic.co/elasticsearch/elasticsearch:5.5.1
+#    ports:
+#      - "9200:9200"
+#    volumes:
+#      - elasticsearch_data:/usr/share/elasticsearch/data
+#      - ./elasticsearch.yml:/conf/elasticsearch.yml
+#    # logging:
+#    #   driver: none
+#    environment:
+#      - cluster.name=docker-cluster
+#      - bootstrap.memory_lock=true
+#      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+#      - xpack.security.enabled=false
+#      - xpack.watcher.enabled=false
+#      - xpack.monitoring.enabled=false
+#      - xpack.ml.enabled=false
+#      - xpack.graph.enabled=false
+#    ulimits:
+#      memlock:
+#        soft: -1
+#        hard: -1
+#    # deploy:
+#    #   resources:
+#    #     limits:
+#    #       memory: 1g
+#    restart: always
+    
+  kibana:
+    container_name: kibana
+    image: docker.elastic.co/kibana/kibana-oss:6.6.0  # must match elasticsearch image
+    volumes:
+      - /media/hdd/Docker/kibana/:/usr/share/kibana/data
+    labels:
+      - traefik.frontend.rule=Host:kibana.stoicatedy.ovh
+      - traefik.port=5601
+      - traefik.frontend.auth.forward.address=http://authelia:8080/api/verify?rd=https://auth.stoicatedy.ovh
+      - traefik.frontend.headers.customRequestHeaders=X-Original-URL:https://kibana.stoicatedy.ovh/
+    depends_on:
+      - elasticsearch
+    environment:
+      # - XPACK_GRAPH_ENABLED=false
+      # - XPACK_MONITORING_ENABLED=false
+      # - XPACK_REPORTING_ENABLED=false
+      # - XPACK_SECURITY_ENABLED=false
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - KIBANA_ELASTICSEARCH_URL=kibana.stoicatedy.ovh
+    networks:
+      - default
+    restart: always
+
+  # logstash:
+  #   container_name: logstash
+  #   image: docker.elastic.co/logstash/logstash:6.6.0  # must match elasticsearch image
+  #   volumes:
+  #     - /media/hdd/Docker/logstash/:/usr/share/logstash/config
+  #   depends_on:
+  #     - elasticsearch
+  #   environment:
+  #     - ELASTICSEARCH_URL=http://elasticsearch:9200
+  #   networks:
+  #     - default
+  #   restart: always
+    
+  filebeat:
+    container_name: filebeat
+    image: docker.elastic.co/beats/filebeat:6.6.0  # must match elasticsearch image
+    volumes:
+      - /media/hdd/Docker/filebeat/:/usr/share/filebeat/data
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/log/:/var/log/:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+    depends_on:
+      - elasticsearch
+    environment:
+      - setup.kibana.host=172.28.0.4:5601
+    networks:
+      - default
+    restart: always
+    user: root
+
+
+
+  metricbeat:
+    container_name: metricbeat
+    image: docker.elastic.co/beats/metricbeat:6.6.0
+    volumes:
+      - ./metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /proc:/hostfs/proc:ro
+      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+      - /:/hostfs:ro
+    depends_on:
+      - elasticsearch
+    environment:
+      - setup.kibana.host=172.28.0.4:5601
+    networks:
+      - default
+    restart: always
+    user: root
+
+
+
+networks:
+  default:
+    external:
+      name: web

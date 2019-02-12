@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  reverse-proxy:
+    image: traefik # The official Traefik docker image
+    command: --docker \
+        --accesslog.filePath=/var/log/traefik/access.log \
+        --logLevel=INFO \
+        --insecureskipverify \
+        --defaultentrypoints=http,https \
+        --entryPoints=Name:https\ Address::443\ TLS \
+        --entryPoints=Name:http\ Address::80 \
+        --acme \
+        --acme.storage=/acme.json \
+        --acme.entryPoint=https \
+        --acme.httpChallenge.entryPoint=http \
+        --acme.email=stoicatedy@gmail.com \
+        --acme.onHostRule=true \
+        --acme.domains=stoicatedy.ovh
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock # So that Traefik can listen to the Docker events
+      - ./acme.json:/acme.json
+      - /var/log/traefik/:/var/log/traefik/
+    container_name: traefik
+    labels:
+      - traefik.frontend.auth.forward.address=https://auth.stoicatedy.ovh/api/verify?rd=https://auth.stoicatedy.ovh
+    networks:
+      - default
+    restart: always
+
+networks:
+  default:
+    external:
+      name: web

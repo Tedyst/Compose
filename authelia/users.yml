@@ -1,0 +1,7 @@
+users:
+  Tedyst:
+    password: "{CRYPT}$6$rounds=500000$mxAlsJtw66MI1NTP$J47l.jpC3ZJPfOk9iCG2LXGgbF7v.gP53EkUB4Yl0IZBItCDDRvwqHJGho0dwIPGpND/s1iO/Park0kPW8Czt/"
+    email: stoicatedy@gmail.com
+    groups:
+      - admins
+      - dev

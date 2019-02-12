@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  bitwarden:
+    image: mprasil/bitwarden:latest
+    container_name: bitwarden
+    labels:
+      - "traefik.frontend.rule=Host:bitwarden.stoicatedy.ovh"
+    volumes:
+      - /media/hddext4/Docker/bitwarden:/data
+    environment:
+      - SIGNUPS_ALLOWED=false
+      - DOMAIN=https://bitwarden.stoicatedy.ovh
+      - YUBICO_CLIENT_ID=42741
+      - YUBICO_SECRET_KEY=hwCuxlDDLPQ+aeWiaKwAMQOsYF8=
+      - SHOW_PASSWORD_HINT=false
+    restart: always
+    networks:
+      - default
+
+networks:
+  default:
+    external:
+      name: web
