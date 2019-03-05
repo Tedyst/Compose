@@ -14,6 +14,7 @@ services:
       - traefik.frontend.auth.forward.address=https://auth.stoicatedy.ovh/api/verify?rd=https://auth.stoicatedy.ovh?rd=https://filebrowser.stoicatedy.ovh
       - traefik.frontend.headers.customRequestHeaders=X-Original-URI:filebrowser.stoicatedy.ovh
       - traefik.frontend.headers.customRequestHeaders=X-Original-URL:https://filebrowser.stoicatedy.ovh
+      - traefik.frontend.headers.customResponseHeaders=Strict-Transport-Security:max-age=63072000; includeSubDomains; preload
     networks:
       - default
 

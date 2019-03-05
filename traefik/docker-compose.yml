@@ -10,7 +10,7 @@ services:
       --insecureskipverify
       --defaultentrypoints=http,https
       --entryPoints=Name:https\ Address::443\ TLS
-      --entryPoints=Name:http\ Address::80
+      --entryPoints=Name:http\ Address::80\ Redirect.EntryPoint:https
       --acme
       --acme.storage=/acme.json
       --acme.entryPoint=https
@@ -29,6 +29,7 @@ services:
     container_name: traefik
     labels:
       - traefik.frontend.auth.forward.address=https://auth.stoicatedy.ovh/api/verify?rd=https://auth.stoicatedy.ovh?rd=https://kibana.stoicatedy.ovh
+      - traefik.frontend.headers.customResponseHeaders=Strict-Transport-Security:max-age=63072000; includeSubDomains; preload
     networks:
       - default
     env_file: ./env.txt

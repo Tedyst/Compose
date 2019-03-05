@@ -1,11 +1,12 @@
-version: '3'
+version: "3"
 
 services:
   bitwarden:
     image: mprasil/bitwarden:latest
     container_name: bitwarden
     labels:
-      - "traefik.frontend.rule=Host:bitwarden.stoicatedy.ovh"
+      - traefik.frontend.rule=Host:bitwarden.stoicatedy.ovh
+      - traefik.frontend.headers.customResponseHeaders=Strict-Transport-Security:max-age=63072000; includeSubDomains; preload
     volumes:
       - /media/hddext4/Docker/bitwarden:/data
     environment:
