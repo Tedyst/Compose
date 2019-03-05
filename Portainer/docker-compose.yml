@@ -1,0 +1,23 @@
+version: "2"
+services:
+  portainer:
+    container_name: portainer
+    image: portainer/portainer
+    restart: always
+    command: --no-auth
+    volumes:
+      - /media/hddext4/Docker/Portainer/:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      - traefik.port=9000
+      - traefik.frontend.rule=Host:portainer.stoicatedy.ovh
+      - traefik.frontend.auth.forward.address=https://auth.stoicatedy.ovh/api/verify?rd=https://auth.stoicatedy.ovh?rd=https://portainer.stoicatedy.ovh
+      - traefik.frontend.headers.customRequestHeaders=X-Original-URI:portainer.stoicatedy.ovh
+      - traefik.frontend.headers.customRequestHeaders=X-Original-URL:https://portainer.stoicatedy.ovh
+    networks:
+      - default
+
+networks:
+  default:
+    external:
+      name: web

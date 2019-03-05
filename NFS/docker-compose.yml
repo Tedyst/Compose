@@ -1,0 +1,18 @@
+version: "2"
+services:
+  filebrowser:
+    container_name: nfs
+    image: itsthenetwork/nfs-server-alpine:latest
+    restart: always
+    volumes:
+      - /media/hddext4/FileServer/:/nfsshare
+    ports:
+      - 2049:2049
+    environment:
+      - SHARED_DIRECTORY=/nfsshare
+    privileged: true
+
+networks:
+  default:
+    external:
+      name: web

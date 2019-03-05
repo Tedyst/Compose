@@ -1,0 +1,23 @@
+version: "2"
+services:
+  filebrowser:
+    container_name: filebrowser
+    image: filebrowser/filebrowser
+    restart: always
+    volumes:
+      - /media/hddext4/FileServer/:/srv
+      - ./database.db:/database.db
+      - ./filebrowser.json:/.filebrowser.json
+    labels:
+      - traefik.port=80
+      - traefik.frontend.rule=Host:filebrowser.stoicatedy.ovh
+      - traefik.frontend.auth.forward.address=https://auth.stoicatedy.ovh/api/verify?rd=https://auth.stoicatedy.ovh?rd=https://filebrowser.stoicatedy.ovh
+      - traefik.frontend.headers.customRequestHeaders=X-Original-URI:filebrowser.stoicatedy.ovh
+      - traefik.frontend.headers.customRequestHeaders=X-Original-URL:https://filebrowser.stoicatedy.ovh
+    networks:
+      - default
+
+networks:
+  default:
+    external:
+      name: web
