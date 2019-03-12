@@ -1,3 +1,5 @@
 traefik/acme.json
-traefik/env.txt
+*env.txt
 *.db
+.env
+mail/certs

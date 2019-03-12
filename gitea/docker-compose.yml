@@ -1,0 +1,25 @@
+version: "2"
+
+services:
+  server:
+    image: gitea/gitea:latest
+    restart: always
+    container_name: gitea
+    networks:
+      - default
+    volumes:
+      - /media/hddext4/Docker/Gitea:/data
+    labels:
+      - traefik.port=3000
+      - traefik.frontend.rule=Host:git.stoicatedy.ovh
+      # - traefik.frontend.auth.forward.address=https://auth.stoicatedy.ovh/api/verify?rd=https://auth.stoicatedy.ovh?rd=https://git.stoicatedy.ovh
+      - traefik.frontend.headers.customRequestHeaders=X-Original-URI:git.stoicatedy.ovh
+      - traefik.frontend.headers.customRequestHeaders=X-Original-URL:https://git.stoicatedy.ovh
+      - traefik.frontend.headers.customResponseHeaders=Strict-Transport-Security:max-age=63072000; includeSubDomains; preload
+    ports:
+      - "22:22"
+
+networks:
+  default:
+    external:
+      name: web

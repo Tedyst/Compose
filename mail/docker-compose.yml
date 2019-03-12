@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  mail:
+    image: zixia/simple-mail-forwarder
+    ports:
+      - "25:25"
+    environment:
+      - SMF_CONFIG=@stoicatedy.ovh:stoicatedy@gmail.com
+      - SMF_RELAYHOST=mail.upcnet.ro
+    volumes:
+      - ./certs/stoicatedy.ovh/:/etc/postfix/cert/
+    restart: always
+  extractor:
+    image: danielhuisman/traefik-certificate-extractor
+    volumes:
+      - ../traefik/:/app/data:ro
+      - ./certs/:/app/certs
+#dcker run --name extractor -d -v /srv/extractor/data:/app/data -v /srv/extractor/certs:/app/certs danielhuisman/traefik-certificate-extractor

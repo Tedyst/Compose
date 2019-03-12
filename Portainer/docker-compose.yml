@@ -17,8 +17,3 @@ services:
       - traefik.frontend.headers.customResponseHeaders=Strict-Transport-Security:max-age=63072000; includeSubDomains; preload
     networks:
       - default
-
-networks:
-  default:
-    external:
-      name: web
