@@ -3,11 +3,12 @@ version: "3"
 services:
   mail:
     image: zixia/simple-mail-forwarder
+    container_name: mail
     ports:
       - "25:25"
     environment:
       - SMF_CONFIG=@stoicatedy.ovh:stoicatedy@gmail.com
-      - SMF_RELAYHOST=mail.upcnet.ro
+      - SMF_RELAYHOST=smtp.rcs-rds.ro
     volumes:
       - ./certs/stoicatedy.ovh/:/etc/postfix/cert/
     restart: always
