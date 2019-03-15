@@ -1,7 +1,7 @@
 version: "2"
 
 services:
-  server:
+  gitea:
     image: gitea/gitea:latest
     restart: always
     container_name: gitea
@@ -18,7 +18,6 @@ services:
       - traefik.frontend.headers.customResponseHeaders=Strict-Transport-Security:max-age=63072000; includeSubDomains; preload
     ports:
       - "22:22"
-
 networks:
   default:
     external:
