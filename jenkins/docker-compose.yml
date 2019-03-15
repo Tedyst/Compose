@@ -1,0 +1,29 @@
+version: "2"
+
+services:
+  jenkins:
+    build: ./
+    environment:
+      JAVA_OPTS: "-Djava.awt.headless=true"
+    container_name: jenkins
+    # ports:
+    # - "50000:50000" # for discovery
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /media/hddext4/Docker/Jenkins:/var/jenkins_home
+    user: root
+    restart: always
+    labels:
+      - traefik.port=8080
+      - traefik.frontend.rule=Host:jenkins.stoicatedy.ovh
+      - "traefik.frontend.redirect.regex=jenkins.stoicatedy.ovh[/]{0,1}$$"
+      - "traefik.frontend.redirect.replacement=jenkins.stoicatedy.ovh/blue"
+      # - traefik.frontend.auth.forward.address=https://auth.stoicatedy.ovh/api/verify?rd=https://auth.stoicatedy.ovh?rd=https://jenkins.stoicatedy.ovh
+      - traefik.frontend.headers.customRequestHeaders=X-Original-URI:jenkins.stoicatedy.ovh
+      - traefik.frontend.headers.customRequestHeaders=X-Original-URL:https://jenkins.stoicatedy.ovh
+      - traefik.frontend.headers.customResponseHeaders=Strict-Transport-Security:max-age=63072000; includeSubDomains; preload
+
+networks:
+  default:
+    external:
+      name: web
