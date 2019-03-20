@@ -48,7 +48,7 @@ filebeat.modules:
   - module: traefik
     access:
       enabled: true
-      var.paths: ["/var/log/traefik/access.log*"]
+      var.paths: ["/var/log/traefik/access.log"]
   - module: system
     syslog:
       enabled: true
@@ -71,7 +71,7 @@ filebeat.config.modules:
   reload.enabled: false
 
 setup.template.settings:
-  index.number_of_shards: 3
+  index.number_of_shards: 1
 
 setup.kibana:
   # if your kibana is local you can change it to 127.0.0.1:80

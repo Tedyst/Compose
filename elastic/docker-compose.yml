@@ -3,16 +3,19 @@ version: "3.2"
 services:
   elasticsearch:
     container_name: elasticsearch
-    image: docker.elastic.co/elasticsearch/elasticsearch:6.6.0
+    image: docker.elastic.co/elasticsearch/elasticsearch-full:6.6.3-SNAPSHOT
     volumes:
       - /media/hddext4/Docker/elasticsearch/:/usr/share/elasticsearch/data
       - ./elasticsearch.yml:/conf/elasticsearch.yml
     environment:
-      - cluster.name=docker-cluster
+      - cluster.name=docker
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms2048m -Xmx2048m"
+      - ES_JAVA_OPTS=-Xms1024m -Xmx1024m -server
+      - MAX_LOCKED_MEMORY=100000
+      - ES_HEAP_SIZE=512m
       - discovery.zen.minimum_master_nodes=1
       - discovery.type=single-node
+      - xpack.security.enabled=false
     ulimits:
       memlock:
         soft: -1
@@ -35,6 +38,7 @@ services:
     environment:
       - ELASTICSEARCH_URL=http://elasticsearch:9200
       - KIBANA_ELASTICSEARCH_URL=kibana.stoicatedy.ovh
+      - "xpack.security.enabled: false"
     networks:
       - default
     restart: always
@@ -76,6 +80,15 @@ services:
     hostname: Tedy-Desktop
     restart: always
     user: root
+
+  curator:
+    container_name: curator
+    build: ./curator
+    volumes:
+      - ./curator.yml:/app/actions.yml
+      - ./curator/config.yml:/app/config.yml
+    networks:
+      - default
 
 networks:
   default:
