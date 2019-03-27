@@ -3,3 +3,4 @@ traefik/acme.json
 *.db
 .env
 mail/certs
+VPN/openvpn-data
