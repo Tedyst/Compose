@@ -1,0 +1,32 @@
+version: "3"
+
+services:
+  chat:
+    image: rocket.chat
+    container_name: chat
+    labels: 
+      - traefik.frontend.rule=Host:chat.stoicatedy.ovh
+      # - traefik.frontend.auth.forward.address=https://auth.stoicatedy.ovh/api/verify?rd=https://auth.stoicatedy.ovh?rd=https://chat.stoicatedy.ovh
+      - traefik.frontend.headers.customRequestHeaders=X-Original-URI:chat.stoicatedy.ovh
+      - traefik.frontend.headers.customRequestHeaders=X-Original-URL:https://chat.stoicatedy.ovh
+      - traefik.frontend.headers.customResponseHeaders=Strict-Transport-Security:max-age=63072000; includeSubDomains; preload
+    restart: always
+    networks: 
+      - default
+    environment: 
+      - ROOT_URL=https://chat.stoicatedy.ovh
+      - MONGO_URL=mongodb://mongo/chat
+    depends_on: 
+      - mongo
+  mongo:
+    image: mongo
+    container_name: mongo
+    command: --smallfiles
+    restart: always
+    networks: 
+      - default
+
+networks:
+  default:
+    external:
+      name: web
