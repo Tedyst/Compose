@@ -1,5 +1,5 @@
-FROM jenkinsci/blueocean:latest
+FROM jenkins/jenkins:slim
 USER root
-MAINTAINER Stoica Tedy <stoicatedy@gmail.com>
-
-RUN apk add --no-cache py3-pip py-virtualenv
+LABEL Author Stoica Tedy <stoicatedy@gmail.com>
+RUN curl -sSL https://get.docker.com/ | sh
+# RUN apk add --no-cache docker

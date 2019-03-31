@@ -13,6 +13,7 @@ services:
       - /media/hddext4/Docker/Jenkins:/var/jenkins_home
     user: root
     restart: always
+    privileged: true
     labels:
       - traefik.port=8080
       - traefik.frontend.rule=Host:jenkins.stoicatedy.ovh
