@@ -14,7 +14,7 @@ pipeline {
                         script {
                             dir("jenkins/runner") {
                                 image = docker.build("tedyst/jenkins-slave")
-                                docker.withRegistry('', registryCredential) {
+                                docker.withRegistry('', 'docker') {
                                     image.push("latest")
                                 }
                             }
